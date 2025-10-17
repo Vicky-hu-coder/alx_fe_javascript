@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('quotes', JSON.stringify(quotes));
   }
 
-  // Render quote
+  // Render a quote object in DOM
   function renderQuoteObject(qObj) {
     quoteDisplay.innerHTML = '';
     const p = document.createElement('p');
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     quoteDisplay.appendChild(span);
   }
 
-  // Populate categories dropdown dynamically
+  // Populate categories dynamically
   function populateCategories() {
     const categories = Array.from(new Set(quotes.map(q => q.category)));
     categoryFilterSelect.innerHTML = '<option value="all">All Categories</option>';
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
     categoryFilterSelect.value = lastCategory;
   }
 
-  // Filter quotes
+  // Filter quotes by selected category
   window.filterQuotes = function() {
     const selected = categoryFilterSelect.value;
     localStorage.setItem('lastSelectedCategory', selected);
@@ -62,26 +62,26 @@ document.addEventListener('DOMContentLoaded', () => {
     sessionStorage.setItem('lastViewedQuote', JSON.stringify(filteredQuotes[idx]));
   }
 
-  // Show random quote
+  // Show random quote (respects selected category)
   function showRandomQuote() {
-    filterQuotes(); // reuse filtering logic
+    filterQuotes();
   }
 
   // Add new quote
   function addQuote() {
     const text = newQuoteTextInput.value.trim();
     const category = newQuoteCategoryInput.value.trim();
-    if (!text || !category) return alert('Enter both quote and category.');
+    if (!text || !category) return alert('Enter both quote text and category.');
     const newQ = { text, category };
     quotes.push(newQ);
     saveQuotes();
-    populateCategories(); // update categories dropdown
+    populateCategories();
     renderQuoteObject(newQ);
     newQuoteTextInput.value = '';
     newQuoteCategoryInput.value = '';
   }
 
-  // Export quotes
+  // Export quotes JSON
   function exportToJsonFile() {
     const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
   }
 
-  // Import quotes
+  // Import quotes JSON
   function importFromJsonFile(event) {
     const fileReader = new FileReader();
     fileReader.onload = function(e) {
