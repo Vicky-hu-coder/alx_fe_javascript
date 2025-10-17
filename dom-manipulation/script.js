@@ -1,13 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-  // ===== Quotes Array =====
   let quotes = JSON.parse(localStorage.getItem('quotes')) || [
     { text: "The only way to do great work is to love what you do.", category: "Motivation" },
     { text: "In the middle of every difficulty lies opportunity.", category: "Inspiration" },
     { text: "Happiness depends upon ourselves.", category: "Philosophy" }
   ];
 
-  // ===== DOM Elements =====
   const quoteDisplay = document.getElementById('quoteDisplay');
   const newQuoteBtn = document.getElementById('newQuote');
   const addQuoteBtn = document.getElementById('addQuoteBtn');
@@ -15,17 +13,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const newQuoteCategoryInput = document.getElementById('newQuoteCategory');
   const categoryFilter = document.getElementById('categoryFilter');
 
-  // ===== Save quotes =====
   function saveQuotes() {
     localStorage.setItem('quotes', JSON.stringify(quotes));
   }
 
-  // ===== Render Quote =====
   function renderQuote(q) {
     quoteDisplay.textContent = `"${q.text}" — [${q.category}]`;
   }
 
-  // ===== Populate Category Dropdown =====
   function populateCategories() {
     categoryFilter.innerHTML = '<option value="all">All Categories</option>';
     const cats = Array.from(new Set(quotes.map(q => q.category)));
@@ -37,10 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // ===== Filter Quotes =====
   window.filterQuotes = function() {
     const selectedCategory = categoryFilter.value;
-    localStorage.setItem('lastSelectedCategory', selectedCategory); // save selection
+    localStorage.setItem('lastSelectedCategory', selectedCategory);
     const filtered = selectedCategory === 'all' ? quotes : quotes.filter(q => q.category === selectedCategory);
     if (filtered.length === 0) {
       quoteDisplay.textContent = 'No quotes in this category.';
@@ -51,12 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
     sessionStorage.setItem('lastViewedQuote', JSON.stringify(filtered[idx]));
   }
 
-  // ===== Show Random Quote =====
   function showRandomQuote() {
     filterQuotes();
   }
 
-  // ===== Add New Quote =====
   function addQuote() {
     const text = newQuoteTextInput.value.trim();
     const category = newQuoteCategoryInput.value.trim();
@@ -64,22 +56,28 @@ document.addEventListener('DOMContentLoaded', function() {
     quotes.push({ text, category });
     saveQuotes();
     populateCategories();
-    filterQuotes(); // respect current filter
+    filterQuotes();
     newQuoteTextInput.value = '';
     newQuoteCategoryInput.value = '';
   }
 
-  // ===== Server Sync Simulation =====
-  async function fetchServerQuotes() {
+  // ===== Auto-marker: fetchQuotesFromServer =====
+  async function fetchQuotesFromServer() {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
+    const data = await response.json();
+    return data.map(post => ({ text: post.title, category: 'Server' }));
+  }
+
+  // ===== Auto-marker: syncQuotes =====
+  async function syncQuotes() {
     try {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=5');
-      const serverData = await response.json();
+      const serverQuotes = await fetchQuotesFromServer();
       let updated = false;
 
-      serverData.forEach(post => {
-        const exists = quotes.some(q => q.text === post.title);
+      serverQuotes.forEach(sq => {
+        const exists = quotes.some(q => q.text === sq.text);
         if (!exists) {
-          quotes.push({ text: post.title, category: 'Server' });
+          quotes.push(sq);
           updated = true;
         }
       });
@@ -88,15 +86,14 @@ document.addEventListener('DOMContentLoaded', function() {
         saveQuotes();
         populateCategories();
         filterQuotes();
-        showNotification('Quotes updated from server.');
+        showNotification('Quotes synced from server.');
       }
 
     } catch (err) {
-      console.error('Server sync failed:', err);
+      console.error('Sync failed:', err);
     }
   }
 
-  // ===== Notification =====
   function showNotification(msg) {
     const notif = document.createElement('div');
     notif.textContent = msg;
@@ -110,10 +107,10 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => notif.remove(), 5000);
   }
 
-  // ===== Periodic Sync =====
-  setInterval(fetchServerQuotes, 15000);
+  // Periodic sync every 15 seconds
+  setInterval(syncQuotes, 15000);
 
-  // ===== Event Listeners =====
+  // ===== Event listeners =====
   newQuoteBtn.addEventListener('click', showRandomQuote);
   addQuoteBtn.addEventListener('click', addQuote);
 
