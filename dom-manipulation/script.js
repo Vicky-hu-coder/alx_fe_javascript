@@ -1,5 +1,7 @@
+// Make sure code runs after DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  // Array of quote objects
+
+  // Array of quote objects with text and category
   const quotes = [
     { text: "The only way to do great work is to love what you do.", category: "Motivation" },
     { text: "In the middle of every difficulty lies opportunity.", category: "Inspiration" },
@@ -13,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const newQuoteTextInput = document.getElementById('newQuoteText');
   const newQuoteCategoryInput = document.getElementById('newQuoteCategory');
 
-  // Function to display a quote object in the DOM
+  // Function to render a quote in the DOM
   function renderQuoteObject(qObj) {
     quoteDisplay.innerHTML = '';
     const p = document.createElement('p');
@@ -25,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
     quoteDisplay.appendChild(span);
   }
 
-  // Show a random quote
-  function displayRandomQuote() {
+  // Function to display a random quote (used by "Show New Quote" button)
+  function showRandomQuote() {
     if (!Array.isArray(quotes) || quotes.length === 0) {
       quoteDisplay.textContent = 'No quotes available.';
       return;
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderQuoteObject(quotes[idx]);
   }
 
-  // Add a new quote to the array and update the DOM
+  // Function to add a new quote to the array and update the DOM
   function addQuote() {
     const text = newQuoteTextInput.value.trim();
     const category = newQuoteCategoryInput.value.trim();
@@ -51,10 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Event listeners
-  newQuoteBtn.addEventListener('click', displayRandomQuote);
+  newQuoteBtn.addEventListener('click', showRandomQuote);
   addQuoteBtn.addEventListener('click', addQuote);
 
-  // Expose functions globally (optional, for testing)
-  window.displayRandomQuote = displayRandomQuote;
-  window.addQuote = addQuote;
+  // Optional: show first quote on load
+  showRandomQuote();
+
 });
