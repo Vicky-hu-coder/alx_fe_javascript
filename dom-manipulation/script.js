@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('quotes', JSON.stringify(quotes));
   }
 
-  // Render a quote object in DOM
+  // Render a quote object
   function renderQuoteObject(qObj) {
     quoteDisplay.innerHTML = '';
     const p = document.createElement('p');
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     quoteDisplay.appendChild(span);
   }
 
-  // Populate categories dynamically
+  // Populate categories dropdown
   function populateCategories() {
     const categories = Array.from(new Set(quotes.map(q => q.category)));
     categoryFilterSelect.innerHTML = '<option value="all">All Categories</option>';
@@ -43,26 +43,25 @@ document.addEventListener('DOMContentLoaded', () => {
       option.textContent = cat;
       categoryFilterSelect.appendChild(option);
     });
-    // Restore last selected category
-    const lastCategory = localStorage.getItem('lastSelectedCategory') || 'all';
-    categoryFilterSelect.value = lastCategory;
   }
 
-  // Filter quotes by selected category
+  // Filter quotes based on dropdown
   window.filterQuotes = function() {
     const selected = categoryFilterSelect.value;
-    localStorage.setItem('lastSelectedCategory', selected);
+    localStorage.setItem('lastSelectedCategory', selected); // save selected category
+
     const filteredQuotes = selected === 'all' ? quotes : quotes.filter(q => q.category === selected);
     if (filteredQuotes.length === 0) {
       quoteDisplay.textContent = 'No quotes in this category.';
       return;
     }
+
     const idx = Math.floor(Math.random() * filteredQuotes.length);
     renderQuoteObject(filteredQuotes[idx]);
     sessionStorage.setItem('lastViewedQuote', JSON.stringify(filteredQuotes[idx]));
   }
 
-  // Show random quote (respects selected category)
+  // Show random quote
   function showRandomQuote() {
     filterQuotes();
   }
@@ -71,17 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function addQuote() {
     const text = newQuoteTextInput.value.trim();
     const category = newQuoteCategoryInput.value.trim();
-    if (!text || !category) return alert('Enter both quote text and category.');
+    if (!text || !category) return alert('Enter both quote and category.');
     const newQ = { text, category };
     quotes.push(newQ);
     saveQuotes();
     populateCategories();
-    renderQuoteObject(newQ);
+    filterQuotes(); // immediately show new quote respecting filter
     newQuoteTextInput.value = '';
     newQuoteCategoryInput.value = '';
   }
 
-  // Export quotes JSON
+  // Export quotes
   function exportToJsonFile() {
     const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -92,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
   }
 
-  // Import quotes JSON
+  // Import quotes
   function importFromJsonFile(event) {
     const fileReader = new FileReader();
     fileReader.onload = function(e) {
@@ -102,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         quotes.push(...importedQuotes);
         saveQuotes();
         populateCategories();
+        filterQuotes();
         alert('Quotes imported successfully!');
       } catch (err) {
         alert('Failed to import JSON: ' + err.message);
@@ -117,12 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
   exportBtn.addEventListener('click', exportToJsonFile);
   importFileInput.addEventListener('change', importFromJsonFile);
 
-  // Initialize categories dropdown
+  // Populate categories
   populateCategories();
 
-  // Load last viewed quote from sessionStorage
-  const lastViewed = sessionStorage.getItem('lastViewedQuote');
-  if (lastViewed) renderQuoteObject(JSON.parse(lastViewed));
-  else showRandomQuote();
+  // Restore last selected category and show quote
+  const lastCategory = localStorage.getItem('lastSelectedCategory') || 'all';
+  categoryFilterSelect.value = lastCategory;
+  filterQuotes();
 
 });
