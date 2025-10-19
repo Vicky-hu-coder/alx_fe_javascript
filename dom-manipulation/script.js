@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const data = await response.json();
       console.log("Posted to server:", data);
+      showNotification("Local quote posted to server.");
     } catch (error) {
       console.error("Error posting to server:", error);
     }
@@ -82,10 +83,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // ===== SHOW NOTIFICATION =====
   function showNotification(message) {
     const notification = document.getElementById("notification");
+    if (!notification) return;
+
     notification.textContent = message;
-    notification.style.display = "block";
+    notification.style.display = "block";    // make visible
+    notification.style.opacity = 1;           // ensure fully visible
+    notification.style.transition = "opacity 0.5s";
+
+    // Keep visible for 5 seconds, then fade out
     setTimeout(() => {
-      notification.style.display = "none";
+      notification.style.opacity = 0;
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 500); // small delay to let fade finish
     }, 5000);
   }
 
