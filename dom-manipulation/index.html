@@ -4,22 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Quote Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #quote-container { margin: 20px 0; font-size: 1.2em; }
+    #notification {
+      display: none;
+      background: #d4edda;
+      color: #155724;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    button { padding: 10px 15px; font-size: 1em; cursor: pointer; }
+  </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Container for displaying quotes -->
-  <div id="quote-container"></div>
-
-  <!-- Notification area -->
-  <div id="notification" 
-       style="display:none; background:#d4edda; color:#155724; padding:10px; margin:10px; border-radius:5px;">
-  </div>
-
-  <!-- Button to show new quote -->
+  <div id="notification"></div>
+  <div id="quote-container">Loading quotes...</div>
   <button id="new-quote">New Quote</button>
 
-  <!-- Link to JavaScript -->
   <script src="script.js"></script>
 </body>
 </html>
