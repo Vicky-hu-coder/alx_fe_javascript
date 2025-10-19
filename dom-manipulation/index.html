@@ -6,24 +6,23 @@
   <title>Dynamic Quote Generator</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
-    #quote-container { margin: 20px 0; font-size: 1.2em; }
-    #notification {
-      display: none;
-      background: #d4edda;
-      color: #155724;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-    }
-    button { padding: 10px 15px; font-size: 1em; cursor: pointer; }
+    #quoteDisplay { margin: 20px 0; font-size: 1.2em; }
+    input { padding: 8px; margin: 5px 0; }
+    button { padding: 8px 12px; margin: 5px 0; cursor: pointer; }
   </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <div id="notification"></div>
-  <div id="quote-container">Loading quotes...</div>
-  <button id="new-quote">New Quote</button>
+  <div id="quoteDisplay">Loading quotes...</div>
+  <button id="newQuote">Show New Quote</button>
+
+  <h2>Add a New Quote</h2>
+  <div>
+    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
+    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
+    <button onclick="addQuote()">Add Quote</button>
+  </div>
 
   <script src="script.js"></script>
 </body>

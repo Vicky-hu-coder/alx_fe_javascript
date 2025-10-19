@@ -1,112 +1,47 @@
+// ===== INITIAL QUOTES ARRAY =====
+let quotes = [
+  { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
+  { text: "Life is what happens when you're busy making other plans.", category: "Life" },
+  { text: "Success is not final, failure is not fatal: It is the courage to continue that counts.", category: "Success" }
+];
+
+// ===== DISPLAY RANDOM QUOTE =====
+function showRandomQuote() {
+  const quoteContainer = document.getElementById("quoteDisplay");
+  if (quotes.length === 0) {
+    quoteContainer.textContent = "No quotes available.";
+    return;
+  }
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  const quote = quotes[randomIndex];
+  quoteContainer.innerHTML = `<p>"${quote.text}"</p><small>Category: ${quote.category}</small>`;
+}
+
+// ===== ADD QUOTE FUNCTION =====
+function addQuote() {
+  const textInput = document.getElementById("newQuoteText");
+  const categoryInput = document.getElementById("newQuoteCategory");
+
+  const newQuote = textInput.value.trim();
+  const newCategory = categoryInput.value.trim();
+
+  if (newQuote === "" || newCategory === "") {
+    alert("Please enter both quote text and category.");
+    return;
+  }
+
+  const quoteObject = { text: newQuote, category: newCategory };
+  quotes.push(quoteObject); // add to array
+
+  showRandomQuote(); // update DOM to show the new quote
+
+  // Clear inputs
+  textInput.value = "";
+  categoryInput.value = "";
+}
+
+// ===== EVENT LISTENER FOR "SHOW NEW QUOTE" BUTTON =====
 document.addEventListener("DOMContentLoaded", () => {
-
-  // ===== SERVER CONFIG =====
-  const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
-
-  // ===== LOCAL STORAGE FUNCTIONS =====
-  function getLocalQuotes() {
-    return JSON.parse(localStorage.getItem("quotes")) || [];
-  }
-
-  function saveLocalQuotes(quotes) {
-    localStorage.setItem("quotes", JSON.stringify(quotes));
-  }
-
-  // ===== POST QUOTE TO SERVER =====
-  async function postQuoteToServer(quote) {
-    try {
-      const response = await fetch(SERVER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(quote)
-      });
-      const data = await response.json();
-      console.log("Posted to server:", data);
-      showNotification("Local quote posted to server.");
-    } catch (error) {
-      console.error("Error posting to server:", error);
-    }
-  }
-
-  // ===== FETCH QUOTES FROM SERVER =====
-  async function fetchQuotesFromServer() {
-    try {
-      const response = await fetch(SERVER_URL);
-      const data = await response.json();
-      // Only take first 5 items for simplicity
-      return data.slice(0, 5).map(item => ({
-        id: item.id,
-        text: item.title,
-        author: `Server User ${item.userId}`,
-        updatedAt: new Date().toISOString()
-      }));
-    } catch (error) {
-      console.error("Error fetching from server:", error);
-      return [];
-    }
-  }
-
-  // ===== SYNC QUOTES FUNCTION =====
-  async function syncQuotes() {
-    const localQuotes = getLocalQuotes();
-    const serverQuotes = await fetchQuotesFromServer();
-
-    // Merge quotes, giving server precedence
-    const mergedQuotes = [...serverQuotes];
-    localQuotes.forEach(localQuote => {
-      const exists = serverQuotes.some(sq => sq.id === localQuote.id);
-      if (!exists) mergedQuotes.push(localQuote);
-    });
-
-    saveLocalQuotes(mergedQuotes);
-    showNotification("Quotes synced with server. Conflicts resolved using server data.");
-
-    // Post any local-only quotes to server
-    localQuotes.forEach(localQuote => {
-      const existsOnServer = serverQuotes.some(sq => sq.id === localQuote.id);
-      if (!existsOnServer) postQuoteToServer(localQuote);
-    });
-  }
-
-  // ===== DISPLAY RANDOM QUOTE =====
-  function displayQuote() {
-    const quotes = getLocalQuotes();
-    const container = document.getElementById("quote-container");
-    if (quotes.length > 0) {
-      const random = quotes[Math.floor(Math.random() * quotes.length)];
-      container.innerHTML = `<p>"${random.text}"</p><small>- ${random.author}</small>`;
-    } else {
-      container.textContent = "No quotes available.";
-    }
-  }
-
-  // ===== SHOW NOTIFICATION =====
-  function showNotification(message) {
-    const notification = document.getElementById("notification");
-    if (!notification) return;
-
-    notification.textContent = message;
-    notification.style.display = "block";    // make visible
-    notification.style.opacity = 1;           // ensure fully visible
-    notification.style.transition = "opacity 0.5s";
-
-    // Keep visible for 5 seconds, then fade out
-    setTimeout(() => {
-      notification.style.opacity = 0;
-      setTimeout(() => {
-        notification.style.display = "none";
-      }, 500); // small delay to let fade finish
-    }, 5000);
-  }
-
-  // ===== EVENT LISTENER =====
-  document.getElementById("new-quote").addEventListener("click", displayQuote);
-
-  // ===== INITIAL LOAD =====
-  syncQuotes();
-  displayQuote();
-
-  // ===== PERIODIC SYNC =====
-  setInterval(syncQuotes, 15000); // sync every 15 seconds
-
+  document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+  showRandomQuote(); // display initial quote
 });
