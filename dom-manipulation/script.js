@@ -17,7 +17,7 @@ function showRandomQuote() {
   quoteContainer.innerHTML = `<p>"${quote.text}"</p><small>Category: ${quote.category}</small>`;
 }
 
-// ===== ADD QUOTE FUNCTION =====
+// ===== ADD QUOTE FUNCTION (GLOBAL) =====
 function addQuote() {
   const textInput = document.getElementById("newQuoteText");
   const categoryInput = document.getElementById("newQuoteCategory");
@@ -33,15 +33,18 @@ function addQuote() {
   const quoteObject = { text: newQuote, category: newCategory };
   quotes.push(quoteObject); // add to array
 
-  showRandomQuote(); // update DOM to show the new quote
+  showRandomQuote(); // update DOM
 
-  // Clear inputs
   textInput.value = "";
   categoryInput.value = "";
 }
 
-// ===== EVENT LISTENER FOR "SHOW NEW QUOTE" BUTTON =====
+// ===== EVENT LISTENER =====
 document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("newQuote").addEventListener("click", showRandomQuote);
-  showRandomQuote(); // display initial quote
+  // Show initial random quote
+  showRandomQuote();
+
+  // Event listener for "Show New Quote" button
+  const newQuoteBtn = document.getElementById("newQuote");
+  newQuoteBtn.addEventListener("click", showRandomQuote);
 });
