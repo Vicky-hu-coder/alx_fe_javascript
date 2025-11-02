@@ -4,9 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Quote Generator</title>
+  <style>
+    #notification {
+      display: none;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      color: #fff;
+    }
+    #notification.success {
+      background-color: #4CAF50;
+    }
+    #notification.warning {
+      background-color: #f44336;
+    }
+  </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
+
+  <!-- Notification for updates or conflicts -->
+  <div id="notification"></div>
 
   <!-- Category Filter -->
   <div>
@@ -16,13 +34,9 @@
     </select>
   </div>
 
-  <!-- Quote Display -->
   <div id="quoteDisplay"></div>
-
-  <!-- Show New Quote -->
   <button id="newQuote">Show New Quote</button>
 
-  <!-- Add Quote Form -->
   <div id="quoteFormContainer"></div>
 
   <hr>
