@@ -5,40 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dynamic Quote Generator</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f9; }
-    h1 { color: #333; }
-    #quoteDisplay { margin: 20px 0; padding: 10px; border: 1px solid #ccc; border-radius: 8px; background: #fff; }
-    #notification {
-      display: none;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
-    }
-    .success { background-color: #d4edda; color: #155724; }
-    .warning { background-color: #fff3cd; color: #856404; }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f7f8fb; }
+    #quoteDisplay { margin: 20px 0; padding: 12px; border-radius: 8px; background: #fff; border: 1px solid #ddd; }
+    #notification { display:none; padding:10px; margin-top:10px; border-radius:6px; }
+    .success { background:#e6ffed; color:#0b6623; border:1px solid #b7f0c2; }
+    .warning { background:#fff7e6; color:#7a4f00; border:1px solid #ffe8b3; }
+    .error { background:#ffe6e6; color:#8b0000; border:1px solid #f4b3b3; }
+    label { display:inline-block; margin-right:8px; }
+    #controls > * { margin-right:8px; margin-top:8px; }
+    #conflictArea { margin-top:10px; padding:10px; border-radius:6px; background:#fff; border:1px dashed #ccc; display:none; }
+    #conflictArea button { margin-right:8px; }
   </style>
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
 
-  <!-- Category Filter -->
-  <select id="categoryFilter" onchange="filterQuotes()">
-    <option value="all">All Categories</option>
-  </select>
+  <div id="controls">
+    <label for="categoryFilter">Filter:</label>
+    <select id="categoryFilter" onchange="filterQuotes()">
+      <option value="all">All Categories</option>
+    </select>
 
-  <!-- Quote Display -->
+    <button id="newQuote">Show New Quote</button>
+    <button id="exportBtn">Export Quotes (JSON)</button>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+    <button id="syncNow">Sync Now</button>
+  </div>
+
   <div id="quoteDisplay"></div>
 
-  <!-- Buttons -->
-  <button id="newQuote">Show New Quote</button>
-  <button id="exportBtn">Export Quotes (JSON)</button>
-  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
-
-  <!-- Add Quote Form -->
   <div id="quoteFormContainer"></div>
 
-  <!-- Notification Area -->
   <div id="notification"></div>
+
+  <!-- Conflict UI (shown only when there are manual conflicts to resolve) -->
+  <div id="conflictArea"></div>
 
   <script src="script.js"></script>
 </body>
